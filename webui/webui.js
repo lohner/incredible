@@ -8,15 +8,27 @@ function constant_true (r) {
   return true;
 }
 
+function eatBlockRule() {
+  return {
+     id: "Eat",
+     desc: { elim: "ᗤ" },
+     free: ["P"],
+     ports: { in: { type: "assumption", proposition: "P" } }
+  };
+}
+
 function current_logic_rules() {
   return _.filter(logics[logicName].rules, ruleFilter).concat();
 }
 function current_custom_rules() {
   return custom_rules[logicName]||[];
 }
+function current_helper_rules() {
+  return [eatBlockRule()]
+}
 function current_logic() {
   return {
-    rules: current_logic_rules().concat(current_custom_rules())
+    rules: current_logic_rules().concat(current_custom_rules()).concat(current_helper_rules())
   };
 }
 
@@ -177,6 +189,11 @@ function setupPrototypeElements() {
   annBlockDesc.canRemove = false;
   annBlockDesc.data = {annotation: "P"};
   renderBlockDescToDraggable(annBlockDesc, helpers_container);
+  var eatBlockDesc = ruleToBlockDesc(eatBlockRule());
+  eatBlockDesc.isPrototype = true;
+  eatBlockDesc.canRemove = false;
+  eatBlockDesc.data = {rule: eatBlockRule()};
+  renderBlockDescToDraggable(eatBlockDesc, helpers_container);
 }
 
 function with_graph_loading(func) {
